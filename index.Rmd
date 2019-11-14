@@ -5,8 +5,10 @@ date: "11/14/2019"
 output: html_document
 ---
 
-# Simple Website Example
-## Header 2
-### Header 3
+## About Me
 
-Pushing index.html to github.io
+* Jorge Olmos
+* I'm originally from Panama City, Panama, but grew up in Houston, TX
+* I'm a history and philosophy buff, code on my spare time, and enjoy running and lifting weights.
+* I work for Capital One
+* I'm a Texas A&M former student (Aggies would understand)
