@@ -1,14 +1,15 @@
 ---
-title: "Simple Website"
-author: "Jorge Olmos"
-date: "11/14/2019"
+title: "About Me"
 output: html_document
 ---
 
-## About Me
+## Here are some details about me!
 
 * Jorge Olmos
 * I'm originally from Panama City, Panama, but grew up in Houston, TX
 * I'm a history and philosophy buff, code on my spare time, and enjoy running and lifting weights.
 * I work for Capital One
 * I'm a Texas A&M former student (Aggies would understand)
+
+
+"The other tabs represent work / analyses that I have completed.  Please check them out!"
