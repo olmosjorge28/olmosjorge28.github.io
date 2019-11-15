@@ -1,0 +1,126 @@
+---
+title: "beerApp"
+author: "Jorge Olmos"
+date: "11/13/2019"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo = FALSE}
+
+library(shiny)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
+library(plyr)
+library(tibble)
+
+
+beers_df = read.csv("Beers.csv", header=TRUE)
+breweries_df = read.csv("Breweries.csv", header=TRUE)
+colnames(breweries_df)[1] = "Brewery_id"
+
+
+beers_brewery_merge = merge(beers_df,breweries_df,"Brewery_id")
+state_selections = sort(unique(beers_brewery_merge$State))
+state_selections = factor(state_selections, levels=c("ALL",levels(state_selections)))
+
+ui <- fluidPage(
+  
+  # App title ----
+  titlePanel("Beer App Data"),
+  
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+    
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+      
+      #Input: Slider for the number of bins ----
+  
+      
+      #Copy the line below to make a select box 
+      selectInput("analysis", label = h3("IBU vs. ABV or Other"), 
+                    choices = list("Other" = "other","IBU vs. ABV" = "ibuabv"), 
+                    selected = 1),
+       selectInput("select", label = h3("Select ABV or IBU"), 
+                    choices = list("IBU" = "ibu", "ABV" = "abv"), 
+                    selected = 1),
+       selectInput("type", label = h3("Select Histogram or Boxplot"), 
+                    choices = list("Histogram" = "hist", "Boxplot" = "box"), 
+                    selected = 1),
+      selectInput("state", label = h3("Filter By State"), 
+                    choices =  levels(state_selections), 
+                    selected = 1),
+      selectInput("trend", label = h3("Add trend line"), 
+                    choices =  list("Yes" ="yes", "No" ="no"), 
+                    selected = 1),
+                    hr(),
+                    fluidRow(column(3, verbatimTextOutput("value")))
+        
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      plotOutput(outputId = "distPlot")
+      
+    )
+  )
+)
+
+
+# Define server logic required to draw a histogram ----
+server <- function(input, output) {
+  
+  output$distPlot <- renderPlot({
+    x = beers_brewery_merge 
+    
+    if(input$state != "ALL"){
+      x  = x %>% filter(as.character(beers_brewery_merge$State) == input$state)
+    }
+
+    
+    if(input$analysis == "ibuabv"){
+       p <- ggplot(x,aes(x$ABV,x$IBU)) + geom_point() 
+       if(input$trend == "yes"){
+         p +  geom_smooth(method = "lm")
+       }else {
+         p
+       }
+    }else{
+    
+    if(input$select == "abv")
+    {
+    x    <-  filter(x,!is.na(ABV))$ABV
+
+    }
+    if(input$select == "ibu")
+    {
+    x    <-  filter(x,!is.na(IBU))$IBU
+    }
+    
+    if(input$type == "hist"){
+        hist(x, col = "#75AADB", border = "white",
+         xlab = "Measurements",
+         main = "Histogram")
+    }
+    if(input$type == "box"){
+        boxplot(x)
+    }
+      
+    }
+
+  })
+  
+}
+
+shinyApp(ui, server)
+
+```
